@@ -179,7 +179,7 @@ async def blur_video(request: DownloadRequest, background_tasks: BackgroundTasks
 
         ffmpeg_cmd = [
             "ffmpeg", "-i", input_file,
-            "-vf", "split[original][copy];[copy]crop=iw:ih*0.3:0:ih*0.7,boxblur=20:2[blurred];[original][blurred]overlay=0:H*0.7",
+            "-vf", "split[original][copy];[copy]crop=iw:ih*0.15:0:ih*0.82,boxblur=25:3[blurred];[original][blurred]overlay=0:H*0.82",
             "-c:a", "copy",
             "-y", output_file
         ]
