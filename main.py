@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException, Request, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, JSONResponse, Response
+from fastapi.responses import FileResponse, Response
 import yt_dlp
 import static_ffmpeg
 import tempfile
@@ -62,7 +62,7 @@ async def download_audio(request: DownloadRequest, background_tasks: BackgroundT
                 f.write(request.cookies)
 
         ydl_opts = {
-            "format": "bestaudio[ext=m4a]/bestaudio/best",
+            "format": "bestaudio/best",
             "outtmpl": output_template,
             "postprocessors": [{
                 "key": "FFmpegExtractAudio",
@@ -102,7 +102,7 @@ async def download_video(request: DownloadRequest, background_tasks: BackgroundT
                 f.write(request.cookies)
 
         ydl_opts = {
-            "format": "bv[ext=mp4]+ba[ext=m4a]/b[ext=mp4]/best",
+            "format": "bestvideo[ext=mp4]+bestaudio/best[ext=mp4]/best",
             "outtmpl": output_template,
             "merge_output_format": "mp4",
             "quiet": True,
@@ -138,7 +138,7 @@ async def blur_video(request: DownloadRequest, background_tasks: BackgroundTasks
                 f.write(request.cookies)
 
         ydl_opts = {
-            "format": "bv[ext=mp4]+ba[ext=m4a]/b[ext=mp4]/best",
+            "format": "bestvideo[ext=mp4]+bestaudio/best[ext=mp4]/best",
             "outtmpl": output_template,
             "merge_output_format": "mp4",
             "quiet": True,
