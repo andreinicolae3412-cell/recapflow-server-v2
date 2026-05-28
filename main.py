@@ -49,6 +49,50 @@ def cleanup(path: str):
     if os.path.exists(path):
         shutil.rmtree(path)
 
+def get_ydl_opts_audio(output_template, cookies_file=None):
+    opts = {
+        "format": "bestaudio/best",
+        "outtmpl": output_template,
+        "postprocessors": [{
+            "key": "FFmpegExtractAudio",
+            "preferredcodec": "mp3",
+            "preferredquality": "192",
+        }],
+        "quiet": True,
+        "no_warnings": True,
+        "http_headers": {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        },
+        "extractor_args": {
+            "youtube": {
+                "player_client": ["ios", "web"]
+            }
+        },
+    }
+    if cookies_file:
+        opts["cookiefile"] = cookies_file
+    return opts
+
+def get_ydl_opts_video(output_template, cookies_file=None):
+    opts = {
+        "format": "bestvideo[ext=mp4]+bestaudio/best[ext=mp4]/best",
+        "outtmpl": output_template,
+        "merge_output_format": "mp4",
+        "quiet": True,
+        "no_warnings": True,
+        "http_headers": {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        },
+        "extractor_args": {
+            "youtube": {
+                "player_client": ["ios", "web"]
+            }
+        },
+    }
+    if cookies_file:
+        opts["cookiefile"] = cookies_file
+    return opts
+
 @app.post("/download-audio")
 async def download_audio(request: DownloadRequest, background_tasks: BackgroundTasks):
     tmp_dir = tempfile.mkdtemp()
@@ -61,19 +105,7 @@ async def download_audio(request: DownloadRequest, background_tasks: BackgroundT
             with open(cookies_file, "w") as f:
                 f.write(request.cookies)
 
-        ydl_opts = {
-            "format": "bestaudio/best",
-            "outtmpl": output_template,
-            "postprocessors": [{
-                "key": "FFmpegExtractAudio",
-                "preferredcodec": "mp3",
-                "preferredquality": "192",
-            }],
-            "quiet": True,
-            "no_warnings": True,
-        }
-        if cookies_file:
-            ydl_opts["cookiefile"] = cookies_file
+        ydl_opts = get_ydl_opts_audio(output_template, cookies_file)
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.download([request.url])
@@ -101,15 +133,7 @@ async def download_video(request: DownloadRequest, background_tasks: BackgroundT
             with open(cookies_file, "w") as f:
                 f.write(request.cookies)
 
-        ydl_opts = {
-            "format": "bestvideo[ext=mp4]+bestaudio/best[ext=mp4]/best",
-            "outtmpl": output_template,
-            "merge_output_format": "mp4",
-            "quiet": True,
-            "no_warnings": True,
-        }
-        if cookies_file:
-            ydl_opts["cookiefile"] = cookies_file
+        ydl_opts = get_ydl_opts_video(output_template, cookies_file)
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.download([request.url])
@@ -137,15 +161,7 @@ async def blur_video(request: DownloadRequest, background_tasks: BackgroundTasks
             with open(cookies_file, "w") as f:
                 f.write(request.cookies)
 
-        ydl_opts = {
-            "format": "bestvideo[ext=mp4]+bestaudio/best[ext=mp4]/best",
-            "outtmpl": output_template,
-            "merge_output_format": "mp4",
-            "quiet": True,
-            "no_warnings": True,
-        }
-        if cookies_file:
-            ydl_opts["cookiefile"] = cookies_file
+        ydl_opts = get_ydl_opts_video(output_template, cookies_file)
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.download([request.url])
