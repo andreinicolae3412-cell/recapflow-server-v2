@@ -57,7 +57,7 @@ def get_base_opts():
         },
         "extractor_args": {
             "youtube": {
-                "player_client": ["web", "android", "ios"],
+                "player_client": ["ios", "android", "web"],
             }
         },
     }
@@ -76,7 +76,7 @@ async def download_audio(request: DownloadRequest, background_tasks: BackgroundT
 
         ydl_opts = get_base_opts()
         ydl_opts.update({
-            "format": "bestaudio[ext=m4a]/bestaudio/best",
+            "format": "bestaudio/best",
             "outtmpl": output_template,
             "postprocessors": [{
                 "key": "FFmpegExtractAudio",
@@ -117,7 +117,7 @@ async def download_video(request: DownloadRequest, background_tasks: BackgroundT
 
         ydl_opts = get_base_opts()
         ydl_opts.update({
-            "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
+            "format": "best[ext=mp4]/best",
             "outtmpl": output_template,
             "merge_output_format": "mp4",
         })
@@ -154,7 +154,7 @@ async def blur_video(request: DownloadRequest, background_tasks: BackgroundTasks
 
         ydl_opts = get_base_opts()
         ydl_opts.update({
-            "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
+            "format": "best[ext=mp4]/best",
             "outtmpl": output_template,
             "merge_output_format": "mp4",
         })
