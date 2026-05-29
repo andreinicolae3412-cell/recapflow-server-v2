@@ -175,9 +175,14 @@ async def blur_video(request: DownloadRequest, background_tasks: BackgroundTasks
 
         output_file = os.path.join(tmp_dir, f"{unique_id}_blurred.mp4")
 
+        # Blur doar pe zona de text - banda de jos (ultimele 12% din inaltime), toata latimea
         ffmpeg_cmd = [
             "ffmpeg", "-i", input_file,
-            "-vf", "split[original][copy];[copy]crop=iw:ih*0.15:0:ih*0.82,boxblur=25:3[blurred];[original][blurred]overlay=0:H*0.82",
+            "-vf", (
+                "split[main][blur];"
+                "[blur]crop=iw:ih*0.12:0:ih*0.88,boxblur=10:2[blurred];"
+                "[main][blurred]overlay=0:H*0.88"
+            ),
             "-c:a", "copy",
             "-y", output_file
         ]
